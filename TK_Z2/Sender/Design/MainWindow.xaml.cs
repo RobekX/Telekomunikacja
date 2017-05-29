@@ -64,6 +64,7 @@ namespace Design
             byte[] dataToSend = File.ReadAllBytes(path);
             await Task.Run(() => modem.Send(dataToSend));
             loger.Content = "File sent.";
+            comPort.Close();
         }
     }
 }
