@@ -68,6 +68,7 @@ namespace Design
             receivedFile.Write(dataReceived, 0, dataReceived.Length);
             receivedFile.Close();
             loger.Content = "File received.";
+            comPort.Close();
         }
     }
 }
