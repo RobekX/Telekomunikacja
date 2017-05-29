@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Threading;
 using System.IO;
@@ -8,19 +8,15 @@ namespace Design
 {
     public class Xmodem
     {
-
-        public int ReceiverFileInitiationRetryMillisec = 250;
-        public int ReceiverFileInitiationMaxAttempts = 240;
-        public bool ReceiverFallBackAllowed = true;
-        public int ReceiverTimeoutMillisec = 10000;
-        public int ReceiverMaxConsecutiveRetries = 10;
-
         public const byte C = 43;     // Inicjalizacja transferu
         public const byte SOH = 1;    // Początek nagłówka pakietu
         public const byte NAK = 15;   // Odebrano z niepowodzeniem
         public const byte ACK = 6;    // Odebrano
         public const byte EOT = 4;    // Koniec transmisji
         private int PacketSize = 128;
+        public int ReceiverFileInitiationRetryMillisec = 250;
+        public int ReceiverMaxConsecutiveRetries = 10;
+
         public Xmodem(SerialPort port, byte paddingByte = 26, byte endOfFileByteToSend = 4)
         {
             PaddingByte = paddingByte;
@@ -48,7 +44,6 @@ namespace Design
         {
             Aborted = false;
             BlockNumExpected = 1;
-            _NumFileInitiationBytesSent = 0;
             Remainder = new byte[0];
             DataPacketNumBytesStored = 0;
             ExpectingFirstPacket = true;
@@ -75,30 +70,8 @@ namespace Design
         private void ReceiverFileInitiationRoutine(object notUsed)
         {
             Port.Write(new byte[] { FileInitiationByteToSend }, 0, 1);
-            NumFileInitiationBytesSent += 1;
         }
-        private int _NumFileInitiationBytesSent = 0;
-        public int NumFileInitiationBytesSent
-        {
-            get { return _NumFileInitiationBytesSent; }
-            private set
-            {
-                _NumFileInitiationBytesSent = value;
-                if (_NumFileInitiationBytesSent > ReceiverFileInitiationMaxAttempts)
-                {
-                    if (FileInitiationByteToSend == C && ReceiverFallBackAllowed == true)
-                    {
-                        FileInitiationByteToSend = NAK;
-                        _NumFileInitiationBytesSent = 0;
-                    }
-                    else
-                    {
-                        Abort();
-                        ReceiverUserBlock.Set();
-                    }
-                }
-            }
-        }
+        
 
         private bool ValidPacketReceived = false;
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
