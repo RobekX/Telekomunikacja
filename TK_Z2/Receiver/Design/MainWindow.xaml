@@ -1,0 +1,18 @@
+﻿<Window x:Class="Design.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Design"
+        mc:Ignorable="d"
+        Title="Receiver" Height="157.143" Width="605.357" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Button Name="receiveButton" IsEnabled="False" Content="Recieve" HorizontalAlignment="Left" Height="41" Margin="42,64,0,0" VerticalAlignment="Top" Width="422" Click="Button_Click_1"/>
+        <TextBox Name="textbox" IsReadOnly="True" HorizontalAlignment="Left" Height="24" Margin="42,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="422"/>
+        <Label Name="loger" Content="Choose output file..." HorizontalAlignment="Left" Height="25" Margin="42,34,0,0" VerticalAlignment="Top" Width="422"/>
+        <Button Content="File" HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" VerticalAlignment="Top" Width="27" Click="Button_Click"/>
+        <Label Content="COMs" HorizontalAlignment="Left" Margin="506,8,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.6,0.058"/>
+        <ComboBox Name="coms"  HorizontalAlignment="Left" Height="28" Margin="488,39,0,0" VerticalAlignment="Top" Width="78"/>
+
+    </Grid>
+</Window>
