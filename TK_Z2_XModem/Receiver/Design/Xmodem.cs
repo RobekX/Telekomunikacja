@@ -25,13 +25,13 @@ namespace Design
         }
         private enum Stances
         {
-            Inactive,                           // The object is neither Sending nor Receiving
-            ReceiverFileInitiation,             // Receiver is sending the file initiation byte at regular intervals
-            ReceiverHeaderSearch,               // Receiver is expecting SOH or STX packet header
-            ReceiverBlockNumSearch,             // Receiver is expecting the block number
-            ReceiverBlockNumComplementSearch,   // Receiver is expecting the block number complement
-            ReceiverDataBytesSearch,            // Receiver is populating data bytes
-            ReceiverErrorCheckSearch,           // Receiver is expecting 1-byte or 2-byte check value(s)
+            Inactive,                           // Nieaktywny
+            ReceiverFileInitiation,             // Inicjacja odebrania pliku
+            ReceiverHeaderSearch,               // Oczekiwanie na SOH/STX
+            ReceiverBlockNumSearch,             // Oczekiwanie na liczbe blokową
+            ReceiverBlockNumComplementSearch,   // Oczekiwanie na kompletną liczbę blokową
+            ReceiverDataBytesSearch,            // Wczytywanie danych
+            ReceiverErrorCheckSearch,           // 1-bajtowe lub 2-bajtowe sprawdzenie wartości
         }
         private Stances CurrentState = Stances.Inactive;
         public delegate void PacketReceivedEventHandler(Xmodem sender, byte[] packet, bool endOfFileDetected);
@@ -42,6 +42,7 @@ namespace Design
 
         public void Receive(MemoryStream allDataReceivedBuffer = null)
         {
+            // inicjowanie zmiennych
             Aborted = false;
             BlockNumExpected = 1;
             Remainder = new byte[0];
@@ -49,21 +50,22 @@ namespace Design
             ExpectingFirstPacket = true;
             ValidPacketReceived = false;
 
+
             FileInitiationByteToSend = C;
             CurrentState = Stances.ReceiverFileInitiation;
-            if (Port.IsOpen == false)
-                Port.Open();
-            Port.DiscardInBuffer();
-            Port.DiscardOutBuffer();
+            if (Port.IsOpen == false) // jesli port zamkniety
+                Port.Open(); // to otworz
+            Port.DiscardInBuffer(); // czyszczenie bufforow
+            Port.DiscardOutBuffer(); // czyszczenie bufforow
             AllDataReceivedBuffer = allDataReceivedBuffer;
-            Port.DataReceived += Port_DataReceived;
-            if (ReceiverFileInitiationTimer == null)
-                ReceiverFileInitiationTimer = new Timer(ReceiverFileInitiationRoutine, null, 0, ReceiverFileInitiationRetryMillisec);
+            Port.DataReceived += Port_DataReceived; //event odebranych danych
+            if (ReceiverFileInitiationTimer == null) 
+                ReceiverFileInitiationTimer = new Timer(ReceiverFileInitiationRoutine, null, 0, ReceiverFileInitiationRetryMillisec); //inicjacja timera
             else
-                ReceiverFileInitiationTimer.Change(0, ReceiverFileInitiationRetryMillisec);
+                ReceiverFileInitiationTimer.Change(0, ReceiverFileInitiationRetryMillisec); // jesli istnieje to wyzeruj
             ReceiverUserBlock.Reset();
             ReceiverUserBlock.WaitOne();
-            ReceiverUserBlock.Reset();
+            ReceiverUserBlock.Reset(); // czyszczenie bloków
         }
         private byte FileInitiationByteToSend;
         private Timer ReceiverFileInitiationTimer;
@@ -74,7 +76,7 @@ namespace Design
         
 
         private bool ValidPacketReceived = false;
-        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e) //event DataReceived
         {
             SerialPort sp = sender as SerialPort;
             int numBytes = sp.BytesToRead;
